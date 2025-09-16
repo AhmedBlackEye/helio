@@ -14,6 +14,7 @@ export const add = mutation({
     const userId = await ctx.db.insert("users", {
       name: "Ahmed",
     });
+    throw new Error("Testing error");
     return userId;
   },
 });
