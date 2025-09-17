@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@workspace/ui/components/sidebar";
+import { cn } from "@workspace/ui/lib/utils";
 import {
   CreditCardIcon,
   InboxIcon,
@@ -117,6 +118,10 @@ const DashboardSidebar = () => {
                     asChild
                     isActive={isActive(item.url)}
                     tooltip={item.title}
+                    className={cn(
+                      isActive(item.url) &&
+                        "bg-sidebar-primary! text-sidebar-primary-foreground!",
+                    )}
                   >
                     <Link href={item.url}>
                       <item.icon className="size-4" />
