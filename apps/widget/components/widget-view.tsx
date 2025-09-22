@@ -11,17 +11,19 @@ import WidgetFooter from "./footer";
 import WidgetHeader from "./header";
 import { WidgetErrorScreen } from "./error-screen";
 import { WidgetLoadingScreen } from "./loading-screen";
+import { WidgetSelectionScreen } from "./selection-screen";
+import { WidgetChatScreen } from "./chat-screen";
 
 const WidgetView = ({ organizationId }: { organizationId: string }) => {
   const screen = useAtomValue(screenAtom);
   const screenComponents: Record<WidgetScreen, JSX.Element> = {
     error: <WidgetErrorScreen />,
     loading: <WidgetLoadingScreen organizationId={organizationId} />,
-    selection: <p>TODO: Selection</p>,
+    selection: <WidgetSelectionScreen />,
     voice: <p>TODO: Voice</p>,
     auth: <WidgetAuthScreen />,
     inbox: <p>TODO: Inbox</p>,
-    chat: <p>TODO: Chat</p>,
+    chat: <WidgetChatScreen />,
     contact: <p>TODO: Contact</p>,
   };
 
