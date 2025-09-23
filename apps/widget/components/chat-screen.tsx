@@ -10,8 +10,34 @@ import {
   organizationIdAtom,
   screenAtom,
 } from "@/atoms/screen";
-import { useQuery } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
+import { toUIMessages, useThreadMessages } from "@convex-dev/agent/react";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  AIConversation,
+  AIConversationContent,
+} from "@workspace/ui/components/ai/conversation";
+import {
+  AIMessage,
+  AIMessageContent,
+} from "@workspace/ui/components/ai/message";
+import { AIResponse } from "@workspace/ui/components/ai/response";
+import { Form, FormField } from "@workspace/ui/components/form";
+import {
+  AIInput,
+  AIInputSubmit,
+  AIInputTextarea,
+  AIInputToolbar,
+  AIInputTools,
+} from "@workspace/ui/components/ai/input";
+
+const formSchema = z.object({
+  message: z.string().min(1, "Message is required"),
+});
+type FormSchema = z.infer<typeof formSchema>;
 
 export const WidgetChatScreen = () => {
   const setScreen = useSetAtom(screenAtom);
@@ -29,6 +55,32 @@ export const WidgetChatScreen = () => {
       : "skip",
   );
 
+  const messages = useThreadMessages(
+    api.public.messages.getMany,
+    conversation?.threadId && contactSessionId
+      ? { threadId: conversation.threadId, contactSessionId }
+      : "skip",
+    { initialNumItems: 10 },
+  );
+
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      message: "",
+    },
+  });
+
+  const createMsg = useAction(api.public.messages.create);
+  const handleOnSubmit = async (values: FormSchema) => {
+    if (!conversation || !contactSessionId) return;
+    form.reset();
+    await createMsg({
+      threadId: conversation.threadId,
+      prompt: values.message,
+      contactSessionId: contactSessionId,
+    });
+  };
+
   const handleOnBack = () => {
     setConversationId(null);
     setScreen("selection");
@@ -44,9 +96,71 @@ export const WidgetChatScreen = () => {
           <MenuIcon />
         </Button>
       </WidgetHeader>
-      <div className="lex flex-1 flex-col gap-y-4 p-4">
-        <p className="text-sm">{JSON.stringify(conversation)}</p>
-      </div>
+      <AIConversation>
+        <AIConversationContent>
+          {toUIMessages(messages.results ?? [])?.map((msg) => (
+            <AIMessage
+              from={msg.role === "user" ? "user" : "assistant"}
+              key={msg.id}
+            >
+              <AIMessageContent>
+                {msg.parts.map((part, i) => {
+                  switch (part.type) {
+                    case "text":
+                      return (
+                        <AIResponse key={`${msg.id}-${i}`}>
+                          {part.text}
+                        </AIResponse>
+                      );
+                    default:
+                      return null;
+                  }
+                })}
+                {/* TODO: Add Avatar component */}
+              </AIMessageContent>
+            </AIMessage>
+          ))}
+        </AIConversationContent>
+      </AIConversation>
+      {/* TODO: Add suggestions */}
+
+      <Form {...form}>
+        <AIInput onSubmit={form.handleSubmit(handleOnSubmit)} className="">
+          <FormField
+            control={form.control}
+            disabled={conversation?.status === "resolved"}
+            name="message"
+            render={({ field }) => (
+              <AIInputTextarea
+                disabled={conversation?.status === "resolved"}
+                onChange={field.onChange}
+                value={field.value}
+                placeholder={
+                  conversation?.status === "resolved"
+                    ? "This conversation has been resolved"
+                    : "Type your message..."
+                }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    form.handleSubmit(handleOnSubmit)();
+                  }
+                }}
+              />
+            )}
+          />
+          <AIInputToolbar>
+            <AIInputTools />
+            <AIInputSubmit
+              disabled={
+                conversation?.status === "resolved" || !form.formState.isValid
+              }
+              status="ready"
+              type="submit"
+            />
+          </AIInputToolbar>
+        </AIInput>
+      </Form>
     </>
   );
 };
