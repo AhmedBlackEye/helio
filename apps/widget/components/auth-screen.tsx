@@ -16,7 +16,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import { useAtomValue, useSetAtom } from "jotai";
-import { contactSessionAtomFamily, organizationIdAtom } from "@/atoms/screen";
+import {
+  contactSessionAtomFamily,
+  organizationIdAtom,
+  screenAtom,
+} from "@/atoms/screen";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required "),
@@ -26,6 +30,7 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 const WidgetAuthScreen = () => {
+  const setScreen = useSetAtom(screenAtom);
   const organizationId = useAtomValue(organizationIdAtom);
   const setContactSessionId = useSetAtom(
     contactSessionAtomFamily(organizationId),
@@ -62,6 +67,7 @@ const WidgetAuthScreen = () => {
       metadata,
     });
     setContactSessionId(contactSessionId);
+    setScreen("selection");
   };
   return (
     <>
