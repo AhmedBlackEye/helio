@@ -132,8 +132,14 @@ export const WidgetChatScreen = () => {
                       return null;
                   }
                 })}
-                {/* TODO: Add Avatar component */}
               </AIMessageContent>
+              {msg.role === "assistant" && (
+                <DicebearAvatar
+                  // imageUrl="/logo.svg"
+                  seed="assistant"
+                  size={32}
+                />
+              )}
             </AIMessage>
           ))}
         </AIConversationContent>
