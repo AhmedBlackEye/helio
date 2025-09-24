@@ -1,7 +1,6 @@
 "use client";
 
 import WidgetView from "@/components/widget-view";
-import { Button } from "@workspace/ui/components/button";
 import { use } from "react";
 
 interface Props {

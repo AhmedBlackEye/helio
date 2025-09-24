@@ -66,7 +66,15 @@ export const WidgetLoadingScreen = ({
         setErrorMsg("Unable to verify organization");
         setScreen("error");
       });
-  }, [step, organizationId]);
+  }, [
+    step,
+    organizationId,
+    setErrorMsg,
+    setLoadingMsg,
+    setOrganizationId,
+    setScreen,
+    validateOrganization,
+  ]);
 
   const validateContactSession = useMutation(
     api.public.contactSessions.validate,
@@ -95,14 +103,20 @@ export const WidgetLoadingScreen = ({
         setIsSessionValid(false);
         setStep("done");
       });
-  }, [step, contactSessionId, validateOrganization]);
+  }, [
+    step,
+    contactSessionId,
+    validateOrganization,
+    setLoadingMsg,
+    validateContactSession,
+  ]);
 
   useEffect(() => {
     if (step != "done") return;
 
     const hasValidSession = contactSessionId && isSessionValid;
     setScreen(hasValidSession ? "selection" : "auth");
-  }, [step, contactSessionId, isSessionValid]);
+  }, [step, contactSessionId, isSessionValid, setScreen]);
 
   return (
     <>
