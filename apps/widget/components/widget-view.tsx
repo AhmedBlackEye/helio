@@ -13,6 +13,7 @@ import { WidgetErrorScreen } from "./error-screen";
 import { WidgetLoadingScreen } from "./loading-screen";
 import { WidgetSelectionScreen } from "./selection-screen";
 import { WidgetChatScreen } from "./chat-screen";
+import { WidgetInboxScreen } from "./inbox-screen";
 
 const WidgetView = ({ organizationId }: { organizationId: string }) => {
   const screen = useAtomValue(screenAtom);
@@ -22,7 +23,7 @@ const WidgetView = ({ organizationId }: { organizationId: string }) => {
     selection: <WidgetSelectionScreen />,
     voice: <p>TODO: Voice</p>,
     auth: <WidgetAuthScreen />,
-    inbox: <p>TODO: Inbox</p>,
+    inbox: <WidgetInboxScreen />,
     chat: <WidgetChatScreen />,
     contact: <p>TODO: Contact</p>,
   };
