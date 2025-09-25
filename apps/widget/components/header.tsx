@@ -10,7 +10,7 @@ const WidgetHeader = ({
   return (
     <header
       className={cn(
-        "bg-sidebar-primary text-sidebar-primary-foreground",
+        "bg-sidebar-primary text-sidclearebar-primary-foreground",
         className,
       )}
     >
