@@ -108,6 +108,7 @@ export const ConversationsPanel = () => {
               <ConversationLink
                 conversation={conversation}
                 pathname={pathname}
+                key={conversation._id}
               />
             ))}
             <InfiniteScrollTrigger
