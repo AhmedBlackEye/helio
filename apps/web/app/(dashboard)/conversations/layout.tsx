@@ -1,4 +1,4 @@
-import { ConversationsPanel } from "@/components/dashboard/conversation-panel";
+import { ConversationsPanel } from "@/components/conversations/conversation-panel";
 import {
   ResizableHandle,
   ResizablePanel,
