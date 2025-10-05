@@ -1,6 +1,6 @@
 import { ConvexError } from "convex/values";
 import { Id } from "./_generated/dataModel";
-import { MutationCtx, QueryCtx } from "./_generated/server";
+import { ActionCtx, MutationCtx, QueryCtx } from "./_generated/server";
 
 interface getSessionOrThrowProps {
   ctx: QueryCtx | MutationCtx;
@@ -19,4 +19,18 @@ export const getSessionOrThrow = async (
     });
   }
   return session;
+};
+
+export const getIdentityOrThrow = async (
+  ctx: QueryCtx | MutationCtx | ActionCtx,
+) => {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) {
+    throw new ConvexError({
+      code: "UNAUTHORIZED",
+      message: "Identity not found",
+    });
+  }
+
+  return identity;
 };
